@@ -2,7 +2,7 @@ import { Card,Modal } from 'react-bootstrap'
 import { useState } from 'react';
 import { addToHistory, deleteAVideos } from '../services/allAPI';
 
-function VideoCard({displayData,setDeleteVideoStatus}) {
+function VideoCard({displayData,setDeleteVideoStatus,insideCategory}) {
 
   const [show, setShow] = useState(false);
 
@@ -26,15 +26,20 @@ function VideoCard({displayData,setDeleteVideoStatus}) {
     const response = await deleteAVideos(id)
     setDeleteVideoStatus(true)
   }
+
+  const dragStarted = (e,id)=>{
+    console.log("Drag started.. video Id: "+id);
+    e.dataTransfer.setData("videoId",id)
+  }
   
   return (
     <>
-      <Card className='mb-3'>
+      <Card className='mb-3' draggable onDragStart={(e)=>dragStarted(e,displayData?.id)}>
       <Card.Img variant="top" height={'180px'} onClick={handleShow} src={displayData?.url} />
       <Card.Body>
         <Card.Title className='d-flex justify-content-between align-items-center'>
           <h6>{displayData?.caption}</h6>
-          <button className='btn border-0' onClick={()=>removeVideo(displayData?.id)}><i className='fa-solid fa-trash text-danger'></i></button>
+          {insideCategory?"":<button className='btn border-0' onClick={()=>removeVideo(displayData?.id)}><i className='fa-solid fa-trash text-danger'></i></button>}
         </Card.Title>
       </Card.Body>
     </Card>
